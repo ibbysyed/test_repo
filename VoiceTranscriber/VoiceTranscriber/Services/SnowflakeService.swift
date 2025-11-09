@@ -6,9 +6,9 @@ class SnowflakeService {
     private init() {}
 
     func uploadTranscription(recording: Recording) async throws {
-        guard !Config.snowflakeAccount.isEmpty,
-              !Config.snowflakeUser.isEmpty,
-              !Config.snowflakePassword.isEmpty else {
+        guard !Config.shared.snowflakeAccount.isEmpty,
+              !Config.shared.snowflakeUser.isEmpty,
+              !Config.shared.snowflakePassword.isEmpty else {
             throw SnowflakeError.missingConfiguration
         }
 
@@ -17,23 +17,23 @@ class SnowflakeService {
         }
 
         // Snowflake SQL API endpoint
-        let urlString = "https://\(Config.snowflakeAccount).snowflakecomputing.com/api/v2/statements"
+        let urlString = "https://\(Config.shared.snowflakeAccount).snowflakecomputing.com/api/v2/statements"
         guard let url = URL(string: urlString) else {
             throw SnowflakeError.invalidURL
         }
 
         // Create authentication header
-        let credentials = "\(Config.snowflakeUser):\(Config.snowflakePassword)"
+        let credentials = "\(Config.shared.snowflakeUser):\(Config.shared.snowflakePassword)"
         guard let credentialsData = credentials.data(using: .utf8) else {
             throw SnowflakeError.authenticationFailed
         }
         let base64Credentials = credentialsData.base64EncodedString()
 
         // Prepare SQL statement
-        let table = Config.snowflakeTable.isEmpty ? "transcriptions" : Config.snowflakeTable
-        let database = Config.snowflakeDatabase
-        let schema = Config.snowflakeSchema
-        let warehouse = Config.snowflakeWarehouse
+        let table = Config.shared.snowflakeTable.isEmpty ? "transcriptions" : Config.shared.snowflakeTable
+        let database = Config.shared.snowflakeDatabase
+        let schema = Config.shared.snowflakeSchema
+        let warehouse = Config.shared.snowflakeWarehouse
 
         // Escape single quotes in transcription
         let escapedTranscription = transcription.replacingOccurrences(of: "'", with: "''")
@@ -94,27 +94,27 @@ class SnowflakeService {
     }
 
     func createTableIfNeeded() async throws {
-        guard !Config.snowflakeAccount.isEmpty,
-              !Config.snowflakeUser.isEmpty,
-              !Config.snowflakePassword.isEmpty else {
+        guard !Config.shared.snowflakeAccount.isEmpty,
+              !Config.shared.snowflakeUser.isEmpty,
+              !Config.shared.snowflakePassword.isEmpty else {
             throw SnowflakeError.missingConfiguration
         }
 
-        let urlString = "https://\(Config.snowflakeAccount).snowflakecomputing.com/api/v2/statements"
+        let urlString = "https://\(Config.shared.snowflakeAccount).snowflakecomputing.com/api/v2/statements"
         guard let url = URL(string: urlString) else {
             throw SnowflakeError.invalidURL
         }
 
-        let credentials = "\(Config.snowflakeUser):\(Config.snowflakePassword)"
+        let credentials = "\(Config.shared.snowflakeUser):\(Config.shared.snowflakePassword)"
         guard let credentialsData = credentials.data(using: .utf8) else {
             throw SnowflakeError.authenticationFailed
         }
         let base64Credentials = credentialsData.base64EncodedString()
 
-        let table = Config.snowflakeTable.isEmpty ? "transcriptions" : Config.snowflakeTable
-        let database = Config.snowflakeDatabase
-        let schema = Config.snowflakeSchema
-        let warehouse = Config.snowflakeWarehouse
+        let table = Config.shared.snowflakeTable.isEmpty ? "transcriptions" : Config.shared.snowflakeTable
+        let database = Config.shared.snowflakeDatabase
+        let schema = Config.shared.snowflakeSchema
+        let warehouse = Config.shared.snowflakeWarehouse
 
         let sqlStatement = """
         CREATE TABLE IF NOT EXISTS \(database).\(schema).\(table) (

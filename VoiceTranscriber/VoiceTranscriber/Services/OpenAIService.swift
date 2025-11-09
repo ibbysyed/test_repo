@@ -6,14 +6,14 @@ class OpenAIService {
     private init() {}
 
     func transcribeAudio(fileURL: URL) async throws -> String {
-        guard !Config.openAIAPIKey.isEmpty else {
+        guard !Config.shared.openAIAPIKey.isEmpty else {
             throw TranscriptionError.missingAPIKey
         }
 
         let boundary = UUID().uuidString
         var request = URLRequest(url: URL(string: Config.openAIAPIURL)!)
         request.httpMethod = "POST"
-        request.setValue("Bearer \(Config.openAIAPIKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(Config.shared.openAIAPIKey)", forHTTPHeaderField: "Authorization")
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
 
         let httpBody = createMultipartBody(

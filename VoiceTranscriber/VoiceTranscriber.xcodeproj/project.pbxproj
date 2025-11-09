@@ -10,11 +10,14 @@
 		VoiceTranscriberApp.swift in Sources = {isa = PBXBuildFile; };
 		ContentView.swift in Sources = {isa = PBXBuildFile; };
 		RecordingDetailView.swift in Sources = {isa = PBXBuildFile; };
+		SettingsView.swift in Sources = {isa = PBXBuildFile; };
 		AudioRecorderManager.swift in Sources = {isa = PBXBuildFile; };
 		OpenAIService.swift in Sources = {isa = PBXBuildFile; };
 		SnowflakeService.swift in Sources = {isa = PBXBuildFile; };
+		KeychainHelper.swift in Sources = {isa = PBXBuildFile; };
 		Config.swift in Sources = {isa = PBXBuildFile; };
 		Recording.swift in Sources = {isa = PBXBuildFile; };
+		SettingsViewModel.swift in Sources = {isa = PBXBuildFile; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +48,7 @@
 				Config.swift,
 				Info.plist,
 				Models,
+				ViewModels,
 				Services,
 				Views,
 			);
@@ -59,12 +63,21 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		ViewModels = {
+			isa = PBXGroup;
+			children = (
+				SettingsViewModel.swift,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		Services = {
 			isa = PBXGroup;
 			children = (
 				AudioRecorderManager.swift,
 				OpenAIService.swift,
 				SnowflakeService.swift,
+				KeychainHelper.swift,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -74,6 +87,7 @@
 			children = (
 				ContentView.swift,
 				RecordingDetailView.swift,
+				SettingsView.swift,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -144,11 +158,14 @@
 				VoiceTranscriberApp.swift in Sources,
 				ContentView.swift in Sources,
 				RecordingDetailView.swift in Sources,
+				SettingsView.swift in Sources,
 				AudioRecorderManager.swift in Sources,
 				OpenAIService.swift in Sources,
 				SnowflakeService.swift in Sources,
+				KeychainHelper.swift in Sources,
 				Config.swift in Sources,
 				Recording.swift in Sources,
+				SettingsViewModel.swift in Sources,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

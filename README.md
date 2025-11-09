@@ -28,7 +28,22 @@ git clone <your-repo-url>
 cd test_repo
 ```
 
-### 2. Configure Environment Variables
+### 2. Configure API Keys
+
+You have two options to configure your API keys:
+
+#### Option A: In-App Settings (Recommended)
+
+1. Build and run the app
+2. Tap the **Settings** gear icon in the top right
+3. Enter your API credentials directly in the app:
+   - OpenAI API Key
+   - Snowflake Account, User, Password, Database, Schema, Warehouse
+4. Tap **Save Settings**
+
+All credentials are securely stored in the iOS Keychain.
+
+#### Option B: Environment Variables
 
 Copy the example environment file:
 
@@ -51,6 +66,8 @@ SNOWFLAKE_SCHEMA=YOUR_SCHEMA
 SNOWFLAKE_WAREHOUSE=YOUR_WAREHOUSE
 SNOWFLAKE_TABLE=transcriptions
 ```
+
+Then configure in Xcode (see step 5 below).
 
 ### 3. Set Up Snowflake Table
 
@@ -75,9 +92,9 @@ Alternatively, the app can attempt to create the table automatically if it has t
 open VoiceTranscriber/VoiceTranscriber.xcodeproj
 ```
 
-### 5. Configure Scheme Environment Variables
+### 5. Configure Scheme Environment Variables (Optional - Only if using Option B)
 
-In Xcode:
+If you chose Option B (environment variables), configure them in Xcode:
 
 1. Go to **Product** → **Scheme** → **Edit Scheme...**
 2. Select **Run** in the left sidebar
@@ -92,10 +109,13 @@ In Xcode:
    - `SNOWFLAKE_WAREHOUSE`
    - `SNOWFLAKE_TABLE` (optional, defaults to "transcriptions")
 
+**Note:** In-app settings (Option A) take precedence over environment variables.
+
 ### 6. Build and Run
 
 1. Select your target device or simulator
 2. Press **Cmd + R** to build and run
+3. If you haven't configured settings yet, tap the Settings gear icon to add your API keys
 
 ## Usage
 
@@ -132,17 +152,21 @@ In Xcode:
 ```
 VoiceTranscriber/
 ├── VoiceTranscriberApp.swift    # App entry point
-├── Config.swift                 # Configuration management
+├── Config.swift                 # Configuration management (Keychain + env vars)
 ├── Info.plist                   # App permissions and settings
 ├── Models/
 │   └── Recording.swift          # Recording data model
+├── ViewModels/
+│   └── SettingsViewModel.swift  # Settings state management
 ├── Services/
 │   ├── AudioRecorderManager.swift  # Audio recording/playback
 │   ├── OpenAIService.swift         # OpenAI Whisper integration
-│   └── SnowflakeService.swift      # Snowflake upload service
+│   ├── SnowflakeService.swift      # Snowflake upload service
+│   └── KeychainHelper.swift        # Secure credential storage
 └── Views/
     ├── ContentView.swift           # Main view with recording list
-    └── RecordingDetailView.swift   # Recording detail and actions
+    ├── RecordingDetailView.swift   # Recording detail and actions
+    └── SettingsView.swift          # In-app settings configuration
 ```
 
 ### Key Components
@@ -195,11 +219,14 @@ Manages data upload to Snowflake:
 
 ## Security Considerations
 
-- API keys are stored in environment variables (not in code)
+- **Keychain Storage**: API keys configured in-app are securely stored in iOS Keychain
+- **Environment Variables**: Alternative configuration method (lower priority than Keychain)
+- **No Hardcoded Credentials**: All credentials must be configured by the user
 - `.env` file is gitignored to prevent credential leaks
 - Snowflake credentials use basic authentication (consider OAuth for production)
 - Audio files are stored locally on the device
 - All API calls use HTTPS
+- Credentials never leave the device except when authenticating to APIs
 
 ## Troubleshooting
 
@@ -223,9 +250,10 @@ Go to **Settings** → **Privacy & Security** → **Microphone** and enable acce
 ### Configuration Warning
 
 If you see the orange configuration warning:
-1. Verify all environment variables are set in Xcode scheme
-2. Restart the app after setting environment variables
-3. Check for typos in variable names
+1. Tap the **Settings** gear icon and enter your API credentials
+2. Or verify all environment variables are set in Xcode scheme (if using Option B)
+3. Restart the app after setting configuration
+4. Check for typos in credentials
 
 ## Future Enhancements
 

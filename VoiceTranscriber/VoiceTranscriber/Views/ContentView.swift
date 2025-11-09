@@ -2,14 +2,16 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var audioManager = AudioRecorderManager()
+    @StateObject private var config = Config.shared
     @State private var showingPermissionAlert = false
+    @State private var showingSettings = false
     @State private var hasPermission = false
 
     var body: some View {
         NavigationView {
             VStack {
-                if !Config.isConfigured {
-                    ConfigurationWarningView()
+                if !config.isConfigured {
+                    ConfigurationWarningView(showSettings: $showingSettings)
                 }
 
                 RecordingControlView(audioManager: audioManager, hasPermission: $hasPermission)
@@ -20,6 +22,18 @@ struct ContentView: View {
                 RecordingsListView(audioManager: audioManager)
             }
             .navigationTitle("Voice Transcriber")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showingSettings = true
+                    }) {
+                        Image(systemName: "gear")
+                    }
+                }
+            }
+            .sheet(isPresented: $showingSettings) {
+                SettingsView()
+            }
             .onAppear {
                 checkPermissions()
             }
@@ -42,20 +56,31 @@ struct ContentView: View {
 }
 
 struct ConfigurationWarningView: View {
+    @Binding var showSettings: Bool
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .foregroundColor(.orange)
                 Text("Configuration Required")
                     .font(.headline)
             }
-            Text("Please configure your API keys in the environment variables:")
+            Text("Configure your OpenAI and Snowflake credentials to start transcribing and uploading recordings.")
                 .font(.caption)
                 .foregroundColor(.secondary)
-            Text("OPENAI_API_KEY, SNOWFLAKE_ACCOUNT, SNOWFLAKE_USER, SNOWFLAKE_PASSWORD")
-                .font(.caption2)
-                .foregroundColor(.secondary)
+
+            Button(action: {
+                showSettings = true
+            }) {
+                HStack {
+                    Image(systemName: "gear")
+                    Text("Open Settings")
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+            }
+            .buttonStyle(.bordered)
         }
         .padding()
         .background(Color.orange.opacity(0.1))

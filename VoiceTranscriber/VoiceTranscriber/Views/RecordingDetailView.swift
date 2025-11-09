@@ -3,6 +3,7 @@ import SwiftUI
 struct RecordingDetailView: View {
     let recording: Recording
     @ObservedObject var audioManager: AudioRecorderManager
+    @ObservedObject private var config = Config.shared
 
     @State private var isTranscribing = false
     @State private var isUploading = false
@@ -93,7 +94,7 @@ struct RecordingDetailView: View {
                         .foregroundColor(.white)
                         .cornerRadius(10)
                     }
-                    .disabled(isTranscribing || !Config.isConfigured)
+                    .disabled(isTranscribing || !config.isConfigured)
                 }
 
                 Divider()
@@ -134,7 +135,7 @@ struct RecordingDetailView: View {
                         .foregroundColor(.white)
                         .cornerRadius(10)
                     }
-                    .disabled(isUploading || recording.transcription == nil || !Config.isConfigured)
+                    .disabled(isUploading || recording.transcription == nil || !config.isConfigured)
 
                     if recording.transcription == nil {
                         Text("Transcribe the recording first before uploading")
