@@ -38,3 +38,8 @@ Carthage/Build/
 .AppleDouble
 .LSOverride
 ._*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
